@@ -7,6 +7,7 @@ export function filterTransactions(transactions: readonly Transaction[], filters
   const categories = filters.categories?.length ? new Set(filters.categories) : null;
   const statuses = filters.statuses?.length ? new Set(filters.statuses) : null;
   const accounts = filters.accountIds?.length ? new Set(filters.accountIds) : null;
+  const cards = filters.cardIds?.length ? new Set(filters.cardIds) : null;
 
   return transactions.filter((t) => {
     const day = t.postedAt.slice(0, 10);
@@ -15,6 +16,7 @@ export function filterTransactions(transactions: readonly Transaction[], filters
     if (categories && !categories.has(t.category)) return false;
     if (statuses && !statuses.has(t.status)) return false;
     if (accounts && !accounts.has(t.accountId)) return false;
+    if (cards && (t.cardId === null || !cards.has(t.cardId))) return false;
     const abs = Math.abs(t.amountCents);
     if (filters.minCents !== undefined && abs < filters.minCents) return false;
     if (filters.maxCents !== undefined && abs > filters.maxCents) return false;

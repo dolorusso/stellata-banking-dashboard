@@ -66,6 +66,11 @@ Feature folders hold their own components, hooks and helpers. Move something to 
 ## Testing
 Vitest unit tests sit next to the code they cover (`*.test.ts`). Required coverage: money utilities, transfer validation (Zod schema + business rules such as insufficient funds) and balance updates after transfers.
 
+## Subagents (`.claude/agents/`)
+- **`feature-slice-builder`** (Read/Write/Edit/Glob/Grep/Bash): builds one feature in parallel with others. The caller assigns **disjoint file ownership**. Builders never edit shared `lib/` or `components/` files, never run git, build or a server, and report the shared changes they need. The integrating agent applies those changes, then builds and checks the app in a browser.
+- **`convention-reviewer`** (Read/Grep/Glob/Bash, **no write tools**): audits the branch diff against this file before the commit is proposed. Its findings are fixed by the main agent, not by the reviewer.
+- See `docs/ai-workflow.md` for how they were used per slice and what they caught.
+
 ## Workflow
 - Build in vertical slices, **one branch per slice** (`feat/a-scaffold`, `feat/b-data-api`, `feat/c-overview`, `feat/d-transactions`, `feat/e-transfers-cards`, `feat/f-polish`). Branches are merged locally into `main`.
 - After each slice, run `typecheck`, `lint` and `test` and fix the failures. Then propose a conventional commit message (`feat: …`, `chore: …`, `test: …`).

@@ -44,6 +44,16 @@ describe("queryTransactions", () => {
   });
 });
 
+describe("filterTransactions by card", () => {
+  it("returns only that card's transactions, across the whole history", () => {
+    const cardId = transactions.find((t) => t.cardId)!.cardId!;
+    const rows = filterTransactions(transactions, { cardIds: [cardId] });
+    expect(rows.length).toBe(transactions.filter((t) => t.cardId === cardId).length);
+    expect(rows.length).toBeGreaterThan(50); // more than one page: proves it's not a client-side slice
+    expect(rows.every((t) => t.cardId === cardId)).toBe(true);
+  });
+});
+
 describe("transactionsToCsv", () => {
   it("writes exact decimal amounts and escapes cells", () => {
     const sample = { ...transactions[0]!, description: 'Lunch, "team"', amountCents: -1_05, memo: "=SUM(A1)" };

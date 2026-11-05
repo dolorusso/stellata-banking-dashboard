@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Logo, LogoMark } from "./logo";
 import { NAV_ITEMS, isActive } from "./nav-items";
+import { ResetDemoButton } from "./reset-demo-button";
 import { ThemeToggle } from "./theme-toggle";
 
 export const BUSINESS_NAME = "Juniper Studio LLC";
@@ -104,7 +105,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/" className="lg:hidden" aria-label="Stellata home">
             <LogoMark />
           </Link>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-1 sm:gap-2">
+            <ResetDemoButton />
             <ThemeToggle />
             {!pathname.startsWith("/transfers") && (
               <Button asChild>
