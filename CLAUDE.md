@@ -18,6 +18,7 @@ A demo case study: a banking dashboard for small businesses. It has no real back
 - `npm run typecheck`: `next typegen && tsc --noEmit` (typegen provides `LayoutProps`/`RouteContext`)
 - `npm run lint`: ESLint
 - `npm test`: Vitest (run once)
+- `npm run e2e` (Node 22+): browser checks against a running server (`npm run build && npm start` first; `BASE_URL` overrides `:3000`). Uses the installed Chrome or Edge via CDP (`scripts/e2e/`), and screenshots go to `e2e-artifacts/` (git-ignored). Run it before proposing a commit for any UI change.
 
 ## Folder structure
 ```
