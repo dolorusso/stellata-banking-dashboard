@@ -88,7 +88,7 @@ Typecheck, lint and Vitest ran after every slice. The bugs worth mentioning were
 
 That last row is a reminder that tests can be wrong too. A check that passed with the wrong number on screen was caught because the logged value was read, not just the ✓.
 
-These checks live in the repo as `npm run e2e` (`scripts/e2e/`, 39 checks, no dependencies beyond an installed Chrome/Edge). The browser checks also confirmed the end-to-end flow:
+These checks live in the repo as `npm run e2e` (`scripts/e2e/`, 42 checks, no dependencies beyond an installed Chrome/Edge). The browser checks also confirmed the end-to-end flow:
 - validation runs before review
 - a $1,500 wire goes pending and completes in ~8s, with an `aria-live` announcement
 - the total balance drops by exactly $1,500.00
