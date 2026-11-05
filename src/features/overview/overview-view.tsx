@@ -7,6 +7,7 @@ import { ErrorState } from "@/components/shared/states";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { api } from "@/lib/api-client";
 import { formatDay } from "@/lib/format";
+import { pollWhileSettling } from "@/lib/queries";
 import type { OverviewRange } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { BalanceSummary } from "./balance-summary";
@@ -30,6 +31,8 @@ export function OverviewView() {
     queryFn: () => api.overview(range),
     // Refetch keeps the frame: hold the previous render instead of flashing skeletons.
     placeholderData: keepPreviousData,
+    // A just-sent transfer shows up in recent activity as pending: keep balances live until it settles.
+    refetchInterval: (q) => pollWhileSettling(q.state.data?.recent),
   });
   const option = RANGE_OPTIONS.find((o) => o.value === range)!;
   const data = query.data;

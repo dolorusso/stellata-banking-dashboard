@@ -198,6 +198,7 @@ export const TransactionFiltersSchema = z
     categories: z.array(CategorySchema).optional(),
     statuses: z.array(TransactionStatusSchema).optional(),
     accountIds: z.array(z.string()).optional(),
+    cardIds: z.array(z.string()).optional(),
     /** Bounds on the absolute amount, in cents. */
     minCents: CentsSchema.nonnegative().optional(),
     maxCents: CentsSchema.nonnegative().optional(),
