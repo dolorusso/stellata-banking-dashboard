@@ -16,7 +16,7 @@
 | **Transactions** | ~220 seeded transactions. Server-side search, sort and pagination. Filters for date (presets + custom), category, status, account and amount range. Active-filter chips, a detail drawer, **CSV export of the current view**, and a list layout on mobile |
 | **Transfers** | ACH or wire to saved payees, or instant transfers between your own accounts. Validation → review → confirmation. Money is held immediately and the transfer goes **pending → completed** live (wire ~8s, ACH ~20s in the demo), with balances and transactions updating everywhere |
 | **Cards** | Virtual debit card with **freeze / unfreeze** (optimistic, with rollback), a monthly spend meter and recent card activity |
-| **Everywhere** | Light/dark/system theme without a flash, sidebar on desktop and bottom nav on mobile, skeletons plus empty and error states, keyboard and screen-reader support, and a "Reset demo data" button |
+| **Everywhere** | One-click light/dark toggle without a flash (the first visit follows the OS), sidebar on desktop and bottom nav on mobile, skeletons plus empty and error states, keyboard and screen-reader support, and a "Reset demo data" button |
 
 > **Try this:** send a $1,500 wire from Operating to Brightline Design Co. and watch it settle. Then check that the total balance dropped by exactly $1,500.00 on the overview and that the wire tops the transactions table. State is kept in your browser (`localStorage`), so it survives reloads. Use ↺ in the header to reset.
 
@@ -35,7 +35,7 @@ npm run dev            # http://localhost:3000
 | `npm run typecheck` | `next typegen` + `tsc --noEmit` (strict, `noUncheckedIndexedAccess`) |
 | `npm run lint` | ESLint (Next core-web-vitals + TypeScript) |
 | `npm test` | Vitest: 79 unit tests (money, transfer rules, ledger/balances, analytics, queries) |
-| `npm run e2e` | 39 browser checks against a running server (`BASE_URL`, default `:3000`) using your installed Chrome or Edge, with no extra dependencies. Screenshots go to `e2e-artifacts/` (git-ignored) |
+| `npm run e2e` | 42 browser checks against a running server (`BASE_URL`, default `:3000`) using your installed Chrome or Edge, with no extra dependencies. Screenshots go to `e2e-artifacts/` (git-ignored) |
 
 **Deploy:** import the repo in Vercel. There are no environment variables, database or paid services.
 

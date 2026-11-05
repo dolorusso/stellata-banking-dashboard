@@ -60,8 +60,15 @@ try {
   await suite("Dark theme", { dark: true }, async (b) => {
     await b.goto(`${BASE}/`);
     await b.waitFor(totalBalance);
-    check("system dark preference applies the dark theme", await b.eval(`document.documentElement.classList.contains("dark")`));
+    check("first visit follows the OS dark preference", await b.eval(`document.documentElement.classList.contains("dark")`));
     await b.screenshot("overview-dark");
+    await b.click('button[aria-label="Switch to light theme"]');
+    check("one click switches to light", await b.eval(`!document.documentElement.classList.contains("dark")`));
+    await b.goto(`${BASE}/`);
+    await b.waitFor(totalBalance);
+    check("the choice survives a reload (overrides the OS)", await b.eval(`!document.documentElement.classList.contains("dark")`));
+    await b.click('button[aria-label="Switch to dark theme"]');
+    check("one click switches back to dark", await b.eval(`document.documentElement.classList.contains("dark")`));
   });
 
   await suite("Transactions", {}, async (b) => {
