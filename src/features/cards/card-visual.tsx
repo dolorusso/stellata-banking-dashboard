@@ -1,9 +1,8 @@
 import { Snowflake } from "lucide-react";
+import { OakShape } from "@/components/layout/logo";
 import type { Card } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 
-/** Four-point star from the logo, reused as a faint watermark. */
-const STAR_PATH = "M16 5c.9 5.6 3.3 8.6 11 11-7.7 2.4-10.1 5.4-11 11-.9-5.6-3.3-8.6-11-11 7.7-2.4 10.1-5.4 11-11Z";
 
 export function CardVisual({ card }: { card: Card }) {
   const frozen = card.status === "frozen";
@@ -27,7 +26,8 @@ export function CardVisual({ card }: { card: Card }) {
         viewBox="0 0 32 32"
         className="absolute -right-10 -bottom-12 size-64 fill-sidebar-foreground opacity-[0.07]"
       >
-        <path d={STAR_PATH} />
+        {/* The logo's oak, reused as a faint watermark */}
+        <OakShape />
       </svg>
 
       <div

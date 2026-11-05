@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { OverviewSkeleton } from "@/features/overview/overview-skeleton";
 import { OverviewView } from "@/features/overview/overview-view";
 
-export const metadata: Metadata = { title: "Overview" };
+// Same segment as the root layout, so its title template doesn't apply: set it in full.
+export const metadata: Metadata = { title: { absolute: "Overview · Stellata" } };
 
 export default function OverviewPage() {
   // Data is client-held (event log in localStorage), so the view fetches after

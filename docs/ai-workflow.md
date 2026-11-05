@@ -55,6 +55,18 @@ The slice split cleanly into two independent features, so it ran as two builders
 > reviewer ran as a general-purpose agent with the file's exact instructions (the read-only rule
 > was stated in the prompt, not enforced by tool restrictions). New sessions get both by name.
 
+### Slice (f): the reviewer by name, with enforced tools
+In the next session Claude Code loaded both agents from `.claude/agents/`, and `convention-reviewer` ran **by name with its frontmatter tool list** (no Write/Edit available to it). Besides its checklist, it was asked to verify every factual claim in the README against the code: test counts, endpoints and methods, settle times, the transfer cap, scripts and paths. All of them held.
+
+| Severity | Finding | Outcome |
+|---|---|---|
+| Low | `npm run e2e` uses Node's built-in `WebSocket` (Node 22+), but nothing declared it | `engines.node >= 22`, noted in README and `CLAUDE.md` |
+| Low | The e2e driver's `dark` option was never exercised | Added a dark-theme suite |
+| Low | The error boundary showed raw `error.message` to users | Generic message; the error is logged to the console |
+| Low | "The 404 title probably drops the `· Stellata` suffix" | **False positive.** The browser shows `Page not found · Stellata`. The reviewer had flagged it as unconfirmed without a server, and the browser check settled it |
+
+The false positive is the point of splitting the roles: static review proposes, and running the app decides.
+
 ## 3. Verification: what actually caught bugs
 
 Typecheck, lint and Vitest ran after every slice. The bugs worth mentioning were caught by **running the app**, not by unit tests. The assistant drove headless Edge through the Chrome DevTools Protocol (clicks, typing, keyboard), took screenshots and read them back.
@@ -70,8 +82,13 @@ Typecheck, lint and Vitest ran after every slice. The bugs worth mentioning were
 | e | Screenshot | Two countdowns for the same transfer disagreed (~8s vs ~13s) | Clock syncs immediately on activation |
 | e | Screenshot | "Frozen" badge covered the card number | Moved between holder and expiry |
 | e | Reviewer agent | Countdown re-announced every second to screen readers | Status-only `aria-live` |
+| f | Screenshot (dark) | Selected toggle (range, destination, chart/table) indistinguishable in dark mode | Primary-tinted "on" state in the toggle primitive |
+| f | Screenshot | Overview tab title lacked the `· Stellata` suffix (root-segment template doesn't apply) | `title.absolute` |
+| f | Reviewing the test itself | An e2e check passed while showing 221 rows, not 12: `a ?? "".includes(x)` binds as `a ?? ("".includes(x))` | Parenthesized; the check now fails when it should |
 
-The browser checks also confirmed the end-to-end flow:
+That last row is a reminder that tests can be wrong too. A check that passed with the wrong number on screen was caught because the logged value was read, not just the ✓.
+
+These checks live in the repo as `npm run e2e` (`scripts/e2e/`, 39 checks, no dependencies beyond an installed Chrome/Edge). The browser checks also confirmed the end-to-end flow:
 - validation runs before review
 - a $1,500 wire goes pending and completes in ~8s, with an `aria-live` announcement
 - the total balance drops by exactly $1,500.00
