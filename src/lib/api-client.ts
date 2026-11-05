@@ -8,11 +8,13 @@ import {
   AccountSchema,
   ApiErrorBodySchema,
   CardSchema,
+  OverviewSchema,
   PayeeSchema,
   TransactionPageSchema,
   TransferEventSchema,
   TransferSchema,
   type CardStatus,
+  type OverviewRange,
   type TransactionFilters,
   type TransactionQuery,
   type TransactionSort,
@@ -49,6 +51,8 @@ async function call<S extends z.ZodType>(path: string, schema: S, body: object =
 }
 
 export const api = {
+  overview: (range: OverviewRange) => call("/api/overview/query", OverviewSchema, { range }),
+
   accounts: () =>
     call("/api/accounts/query", z.object({ accounts: z.array(AccountSchema) })).then((r) => r.accounts),
 

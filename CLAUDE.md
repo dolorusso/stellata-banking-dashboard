@@ -55,7 +55,9 @@ Feature folders hold their own components, hooks and helpers. Move something to 
 - **Dates** are ISO 8601 strings in data and are formatted at the UI edge. The seed uses a fixed faker seed but is anchored to the **current UTC day** (history ends yesterday), so the data has a stable shape and always looks recent. Tests pass a fixed `now`.
 - **UI states:** every data view has loading (skeleton), empty and error states.
 - **Accessibility:** use semantic HTML, label every input, keep everything keyboard reachable, keep focus rings visible, meet AA contrast in both themes, and use `aria-live` for async status (transfer progress).
-- **Numbers:** amounts use `tabular-nums` and are right-aligned in tables.
+- **Numbers:** amounts in tables/lists use the `amount` utility (`tabular-nums`) via `<Money>` and are right-aligned. Large standalone figures (hero, KPI tiles) keep proportional digits.
+- **Charts:** the categorical palette (`--chart-1…6`, fixed order) is validated with the dataviz validator in both themes. Never reorder or cycle it. Single-series charts use `--chart-accent`. Every chart card has a table view (`ChartCard`), a legend for 2 or more series, and a custom `MoneyTooltip` (values are cents). Animations are off because charts refetch while transfers settle. No dual axes.
+- **Money in/out** excludes internal transfers (`category: "transfer"`) and failed transactions. Pending counts.
 - **Simplicity:** add no abstractions without a second use. Keep files small and avoid barrel files. Prefer server-side pure functions over client state machinery.
 - **Styling:** use design tokens (CSS variables) only, with no hard-coded colors in components. Use `cn()` to merge classes.
 

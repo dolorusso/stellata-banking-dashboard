@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/shared/page-header";
-import { Placeholder } from "@/components/shared/placeholder";
+import { Suspense } from "react";
+import { OverviewSkeleton } from "@/features/overview/overview-skeleton";
+import { OverviewView } from "@/features/overview/overview-view";
 
 export const metadata: Metadata = { title: "Overview" };
 
 export default function OverviewPage() {
+  // Data is client-held (event log in localStorage), so the view fetches after
+  // hydration. Suspense lets Cache Components prerender the shell around it.
   return (
-    <>
-      <PageHeader title="Overview" description="Your cash position across every account." />
-      <Placeholder />
-    </>
+    <Suspense fallback={<OverviewSkeleton />}>
+      <OverviewView />
+    </Suspense>
   );
 }

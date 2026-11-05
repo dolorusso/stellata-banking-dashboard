@@ -231,7 +231,43 @@ export const TransactionExportRequestSchema = z.object({
   sort: TransactionSortSchema,
 });
 
+export const OVERVIEW_RANGES = ["30d", "90d", "180d"] as const;
+export const OverviewRangeSchema = z.enum(OVERVIEW_RANGES);
+export type OverviewRange = z.infer<typeof OverviewRangeSchema>;
+
+export const OverviewRequestSchema = z.object({
+  state: DemoStateSchema,
+  range: OverviewRangeSchema,
+});
+
 // ── Responses ───────────────────────────────────────────────────────────────
+const FlowTotalsSchema = z.object({
+  inCents: CentsSchema,
+  /** Positive number: money that left the business. */
+  outCents: CentsSchema,
+  netCents: CentsSchema,
+});
+
+export const OverviewSchema = z.object({
+  range: OverviewRangeSchema,
+  from: IsoDateSchema,
+  to: IsoDateSchema,
+  accounts: z.array(AccountSchema),
+  totalBalanceCents: CentsSchema,
+  pendingOutCents: CentsSchema,
+  flows: FlowTotalsSchema,
+  /** Same-length period right before `from`; null when history doesn't cover it. */
+  previousFlows: FlowTotalsSchema.nullable(),
+  /** Average net outflow per 30 days; 0 when cash-flow positive. */
+  monthlyBurnCents: CentsSchema,
+  runwayMonths: z.number().nullable(),
+  cashFlow: z.array(FlowTotalsSchema.extend({ start: IsoDateSchema, end: IsoDateSchema })),
+  spending: z.array(z.object({ category: CategorySchema, cents: CentsSchema })),
+  balanceTrend: z.array(z.object({ date: IsoDateSchema, balanceCents: CentsSchema })),
+  recent: z.array(TransactionSchema),
+});
+export type Overview = z.infer<typeof OverviewSchema>;
+
 export const TransactionPageSchema = z.object({
   rows: z.array(TransactionSchema),
   total: z.number().int().nonnegative(),
