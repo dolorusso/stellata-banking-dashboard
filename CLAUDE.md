@@ -41,6 +41,8 @@ src/
     transactions-query.ts # filter / sort / paginate / CSV
     http.ts             # server-only: body parsing + error responses
     demo-state.ts       # client-only: event log in localStorage
+    queries.ts          # shared TanStack Query options + settlement polling helper
+    analytics.ts        # overview aggregations (flows, burn, runway, series)
     api-client.ts       # typed fetch helpers used by the client
 ```
 Feature folders hold their own components, hooks and helpers. Move something to `components/` or `lib/` only when two or more features use it.
