@@ -6,7 +6,8 @@ A demo case study: a banking dashboard for small businesses. It has no real back
 
 ## Stack
 - Next.js (App Router) + TypeScript `strict` (also `noUncheckedIndexedAccess`)
-- Tailwind CSS + shadcn/ui (Radix primitives), lucide-react icons, `next-themes` for light/dark mode
+- Next 16 with **Cache Components** enabled: read `node_modules/next/dist/docs/` before using unfamiliar APIs (see AGENTS.md). Data-dependent client UI that reads time must sit behind `<Suspense>`.
+- Tailwind CSS v4 + shadcn/ui (Radix primitives, `cn` package), lucide-react icons. Light/dark mode uses a hand-rolled no-flash script (`components/layout/theme.ts`), not `next-themes`.
 - Recharts (charts), TanStack Table (transactions), Zod (validation), TanStack Query (fetching, loading/error states, polling)
 - @faker-js/faker with a **fixed seed** for mock data
 - Vitest for unit tests
@@ -14,7 +15,7 @@ A demo case study: a banking dashboard for small businesses. It has no real back
 ## Commands
 - `npm run dev`: start the dev server
 - `npm run build`: production build (must pass with zero errors)
-- `npm run typecheck`: `tsc --noEmit`
+- `npm run typecheck`: `next typegen && tsc --noEmit` (typegen provides `LayoutProps`/`RouteContext`)
 - `npm run lint`: ESLint
 - `npm test`: Vitest (run once)
 
@@ -34,8 +35,12 @@ src/
   lib/
     money.ts            # cents math + formatting
     schemas.ts          # Zod schemas = single source of truth for types
-    store.ts            # in-memory store + domain operations (pure where possible)
-    seed.ts             # deterministic faker seed
+    seed.ts             # deterministic faker seed (anchored to the current UTC day)
+    ledger.ts           # seed + replayed events → accounts, transactions, cards, transfers
+    transfers.ts        # transfer business rules + resulting ledger entries
+    transactions-query.ts # filter / sort / paginate / CSV
+    http.ts             # server-only: body parsing + error responses
+    demo-state.ts       # client-only: event log in localStorage
     api-client.ts       # typed fetch helpers used by the client
 ```
 Feature folders hold their own components, hooks and helpers. Move something to `components/` or `lib/` only when two or more features use it.
@@ -45,9 +50,9 @@ Feature folders hold their own components, hooks and helpers. Move something to 
 - **Sign convention:** transaction `amountCents` is signed (+ for inflow, − for outflow). Balances are derived from or kept in sync with transactions.
 - **Types come from Zod.** Define the schema in `lib/schemas.ts` and use `z.infer` for the type. The client and the server import the same schemas.
 - **Validate every API input with Zod** (body and query params). Invalid input returns `400` with `{ error: { message, issues } }`.
-- **Mock backend (stateless):** serverless instances don't share memory, so the server state = deterministic seed + a replayed **user event log**. The client keeps the log in `localStorage` and sends it **in the request body** (never in headers, because of size limits). Every API call is therefore a `POST` with `{ events, ...params }`. Compaction: card state is stored as the latest status per card (not as toggle events), and transfers are capped (`MAX_USER_TRANSFERS`). Past the cap, the UI asks the user to reset the demo. Replay and domain logic are pure functions in `lib/`. Route handlers stay thin.
+- **Mock backend (stateless):** serverless instances don't share memory, so the server state = deterministic seed + a replayed **user event log**. The client keeps the log in `localStorage` and sends it **in the request body** (never in headers, because of size limits). Every API call is therefore a `POST` with `{ state, ...params }`. Convention: reads are `POST /api/<resource>/query`, writes are `POST /api/transfers` and `PATCH /api/cards/[id]`. Business-rule failures return `422` with `{ error: { code, message, field } }`. Replay re-validates every event, so tampered events are dropped. Compaction: card state is stored as the latest status per card (not as toggle events), and transfers are capped (`MAX_USER_TRANSFERS`). Past the cap, the UI asks the user to reset the demo. Replay and domain logic are pure functions in `lib/`. Route handlers stay thin.
 - **Transfer settlement** is derived from time (`createdAt` + settle delay per method). There are no server timers. The client polls (TanStack Query `refetchInterval`) while anything is pending.
-- **Dates** are ISO 8601 strings in data and are formatted at the UI edge. The seed is anchored to a fixed reference date so data is stable.
+- **Dates** are ISO 8601 strings in data and are formatted at the UI edge. The seed uses a fixed faker seed but is anchored to the **current UTC day** (history ends yesterday), so the data has a stable shape and always looks recent. Tests pass a fixed `now`.
 - **UI states:** every data view has loading (skeleton), empty and error states.
 - **Accessibility:** use semantic HTML, label every input, keep everything keyboard reachable, keep focus rings visible, meet AA contrast in both themes, and use `aria-live` for async status (transfer progress).
 - **Numbers:** amounts use `tabular-nums` and are right-aligned in tables.
