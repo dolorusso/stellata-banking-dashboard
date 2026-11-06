@@ -59,7 +59,7 @@ scripts/e2e/           dependency-free browser checks (Chrome DevTools Protocol)
 ```
 
 ### A stateless mock backend that survives serverless
-The brief asked for route handlers backed by an in-memory store, persisted in `localStorage`. On Vercel each request can hit a different serverless instance, so **server memory can't be the source of truth**. Instead:
+I chose route handlers backed by an in-memory store, persisted in localStorage, to demonstrate full-stack skills without needing a real database. On Vercel each request can hit a different serverless instance, so server memory can’t be the source of truth. Instead:
 
 ```
 Browser                                         Route handler (any instance)
