@@ -4,7 +4,7 @@
 
 > Stellata comes from *Quercus stellata*, the post oak. The brand color is `#193e2c`.
 
-**Live demo:** _add the Vercel URL here_
+**Live demo:** https://stellata-banking-dashboard.vercel.app/
 
 **Stack:** Next.js 16 (App Router) · TypeScript (strict) · Tailwind v4 · shadcn/ui · TanStack Query + Table · Recharts · Zod · Vitest
 
