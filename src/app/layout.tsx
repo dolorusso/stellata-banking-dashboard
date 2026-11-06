@@ -13,12 +13,8 @@ export const metadata: Metadata = {
   description: "Business banking for small teams: balances, transactions, transfers and cards.",
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#193e2c" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1511" },
-  ],
-};
+// The app opens in light regardless of the OS theme, so the browser chrome uses the brand color.
+export const viewport: Viewport = { themeColor: "#193e2c" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -60,15 +60,16 @@ try {
   await suite("Dark theme", { dark: true }, async (b) => {
     await b.goto(`${BASE}/`);
     await b.waitFor(totalBalance);
-    check("first visit follows the OS dark preference", await b.eval(`document.documentElement.classList.contains("dark")`));
-    await b.screenshot("overview-dark");
-    await b.click('button[aria-label="Switch to light theme"]');
-    check("one click switches to light", await b.eval(`!document.documentElement.classList.contains("dark")`));
+    // This browser reports an OS dark preference: the app must still open in light.
+    check("first visit opens in light, even with an OS dark preference", await b.eval(`!document.documentElement.classList.contains("dark")`));
+    await b.click('button[aria-label="Switch to dark theme"]');
+    check("one click switches to dark", await b.eval(`document.documentElement.classList.contains("dark")`));
     await b.goto(`${BASE}/`);
     await b.waitFor(totalBalance);
-    check("the choice survives a reload (overrides the OS)", await b.eval(`!document.documentElement.classList.contains("dark")`));
-    await b.click('button[aria-label="Switch to dark theme"]');
-    check("one click switches back to dark", await b.eval(`document.documentElement.classList.contains("dark")`));
+    check("the choice survives a reload", await b.eval(`document.documentElement.classList.contains("dark")`));
+    await b.screenshot("overview-dark");
+    await b.click('button[aria-label="Switch to light theme"]');
+    check("one click switches back to light", await b.eval(`!document.documentElement.classList.contains("dark")`));
   });
 
   await suite("Transactions", {}, async (b) => {

@@ -6,14 +6,13 @@ export type Theme = "light" | "dark";
 
 const STORAGE_KEY = "stellata-theme";
 const CHANGE_EVENT = "stellata-theme-change";
-const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 /**
- * Runs synchronously in <head> before first paint, so there's no flash. A saved
- * choice wins; on a first visit the OS preference is the starting point.
+ * Runs synchronously in <head> before first paint, so there's no flash.
+ * Light by default; dark only when the user chose it.
  * Must stay in sync with `currentTheme` below.
  */
-export const themeInitScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");var d=t==="dark"||(t!=="light"&&matchMedia("${DARK_QUERY}").matches);document.documentElement.classList.toggle("dark",d)}catch(e){}})()`;
+export const themeInitScript = `(function(){try{document.documentElement.classList.toggle("dark",localStorage.getItem("${STORAGE_KEY}")==="dark")}catch(e){}})()`;
 
 function storedTheme(): Theme | null {
   try {
@@ -25,7 +24,7 @@ function storedTheme(): Theme | null {
 }
 
 function currentTheme(): Theme {
-  return storedTheme() ?? (window.matchMedia(DARK_QUERY).matches ? "dark" : "light");
+  return storedTheme() ?? "light";
 }
 
 function applyTheme(theme: Theme) {
@@ -33,17 +32,14 @@ function applyTheme(theme: Theme) {
 }
 
 function subscribe(onChange: () => void) {
-  const media = window.matchMedia(DARK_QUERY);
   const handle = () => {
     applyTheme(currentTheme());
     onChange();
   };
-  // The OS preference only matters until the user picks a theme (see currentTheme).
-  media.addEventListener("change", handle);
+  // "storage" keeps other open tabs in sync with the user's choice.
   window.addEventListener("storage", handle);
   window.addEventListener(CHANGE_EVENT, handle);
   return () => {
-    media.removeEventListener("change", handle);
     window.removeEventListener("storage", handle);
     window.removeEventListener(CHANGE_EVENT, handle);
   };
